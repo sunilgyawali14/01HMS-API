@@ -6,12 +6,16 @@ export const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     const { user, token } = await registerService(name, email, password, role);
-    return res.status(201).json({
-      message: "User registered successfully.",
-      data: {
-        user,
-      },
-    });
+
+// remove password from response 
+const { password: _, ...userWithoutPassword } = user.toJSON();
+
+return res.status(201).json({
+  message: "User registered successfully.",
+  data: {
+    user: userWithoutPassword,
+  },
+});
   } catch (error) {
     return res.status(400).json({
       success: false,

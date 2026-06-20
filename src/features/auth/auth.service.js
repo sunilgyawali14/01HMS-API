@@ -105,8 +105,7 @@ export const loginService= async ({email,password})=>{
   }
 )
 
-//password exclude 
-const { password: _, ...userData}= user.toJSON()
+
 return{
   accessToken,
   refreshToken,
