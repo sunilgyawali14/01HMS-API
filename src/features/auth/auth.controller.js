@@ -3,19 +3,19 @@ import { registerService, loginService } from "./auth.service.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, roles } = req.body;
 
-    const { user, token } = await registerService(name, email, password, role);
+    const { user, token } = await registerService(name, email, password, roles);
 
-// remove password from response 
-const { password: _, ...userWithoutPassword } = user.toJSON();
+    // remove password from response
+    const { password: _, ...userWithoutPassword } = user.toJSON();
 
-return res.status(201).json({
-  message: "User registered successfully.",
-  data: {
-    user: userWithoutPassword,
-  },
-});
+    return res.status(201).json({
+      message: "User registered successfully.",
+      data: {
+        user: userWithoutPassword,
+      },
+    });
   } catch (error) {
     return res.status(400).json({
       success: false,

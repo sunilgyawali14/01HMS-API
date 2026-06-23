@@ -5,7 +5,7 @@ import User from "../user/user.model.js";
 import jwt from "jsonwebtoken"
 
 
-export const registerService = async (name, email, password, role) => {
+export const registerService = async (name, email, password, roles) => {
   // Step 1: Validate required fields
   if (!name|| !email || !password) {
     throw new Error("all field is required");
@@ -30,9 +30,9 @@ export const registerService = async (name, email, password, role) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  //validate the role 
+  //validate the roles 
   const validRoles = ["admin", "doctor", "receptionist", "patient"];
-  if(role && !validRoles.includes(role)){
+  if(roles && !validRoles.includes(roles)){
     throw new Error("Invalid role provided");
   }
 
@@ -41,7 +41,7 @@ export const registerService = async (name, email, password, role) => {
     name,
     email,
     password: hashedPassword,
-    role: role || "patient",
+    roles: roles || "patient",
   });
   // password length validation
   if (password.length < 6) {
@@ -91,7 +91,7 @@ export const loginService= async ({email,password})=>{
     id: user.id,
     role: user.role
   },
-  process.env.JWT_ACCESS_TOKEN,{
+  process.env.JWT_ACCESS_SECRET,{
     expiresIn: process.env.JWT_ACCESS_EXPIRES_IN
   }
 )
@@ -100,16 +100,16 @@ export const loginService= async ({email,password})=>{
   const refreshToken= jwt.sign(
     {
     id: user.id
-  },process.env.JWT_REFRESH_TOKEN,{
+  },process.env.JWT_REFRESH_SECRET,{
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN
   }
 )
-
+ const { password: _, ...userWithoutPassword } = user.toJSON();
 
 return{
   accessToken,
   refreshToken,
-  userData
+  user : userWithoutPassword
 }
 
 

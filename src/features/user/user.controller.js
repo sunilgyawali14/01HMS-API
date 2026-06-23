@@ -32,7 +32,7 @@ const getAllUsers = async (req, res) => {
 };
 const createUser = async (req, res) => {
   try {
-    const {name, email, password, roles} = req.body;
+    const { name, email, password, roles } = req.body;
 
     if (!email || !password || !roles) {
       return res.status(400).json({
@@ -71,8 +71,6 @@ const createUser = async (req, res) => {
     });
   }
 };
-
-
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -105,7 +103,6 @@ const getUserById = async (req, res) => {
     });
   }
 };
-
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -143,7 +140,6 @@ const updateUser = async (req, res) => {
     });
   }
 };
-
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -169,7 +165,6 @@ const deleteUser = async (req, res) => {
     });
   }
 };
-
 export {
   //   registerUser,
   //   loginUser,
