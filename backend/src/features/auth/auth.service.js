@@ -11,8 +11,22 @@ export const registerService = async (name, email, password, roles) => {
     throw new Error("all field is required");
   }
 
+  // email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error("Invalid email format");
+  }
+  // password length validation
+  if (password.length < 6) {
+    throw new Error("Password must be at least 6 characters long");
+  }
+  //validate the roles 
+  const validRoles = ["admin", "doctor", "receptionist", "patient"];
+  if(roles && !validRoles.includes(roles)){
+    throw new Error("Invalid role provided");
+  }
 
-  // Step 2: Check if email already exists (DB Call)
+  //  Check if email already exists (DB Call)
   const userExists = await User.findOne({
     where: { email },
   });
@@ -20,21 +34,11 @@ export const registerService = async (name, email, password, roles) => {
   if (userExists) {
     throw new Error("User already exists with this email");
   }
-  // email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    throw new Error("Invalid email format");
-  }
 
   // Step 3: Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  //validate the roles 
-  const validRoles = ["admin", "doctor", "receptionist", "patient"];
-  if(roles && !validRoles.includes(roles)){
-    throw new Error("Invalid role provided");
-  }
 
   // Step 4: Create user
   const user = await User.create({
@@ -43,10 +47,6 @@ export const registerService = async (name, email, password, roles) => {
     password: hashedPassword,
     roles: roles || "patient",
   });
-  // password length validation
-  if (password.length < 6) {
-    throw new Error("Password must be at least 6 characters long");
-  }
 // //generate token
 // const payload= {
 //   id: user.id,
@@ -58,8 +58,10 @@ export const registerService = async (name, email, password, roles) => {
 //     expiresIn:process.env.JWT_EXPIRES_IN
 //   }
 // )
+const { password: _, ...userWithoutPassword } =
+  user.toJSON ? user.toJSON() : user;
   return {
-    user
+    user: userWithoutPassword
   };
 };  
 
@@ -71,7 +73,7 @@ export const loginService= async ({email,password})=>{
   })
   if(!user){
     throw{
-      status: 404,
+      status: 401,
       message:"invalid Email or Password"
     };
     
@@ -89,7 +91,7 @@ export const loginService= async ({email,password})=>{
   const accessToken= jwt.sign(
     {
     id: user.id,
-    role: user.role
+    roles : user.roles
   },
   process.env.JWT_ACCESS_SECRET,{
     expiresIn: process.env.JWT_ACCESS_EXPIRES_IN

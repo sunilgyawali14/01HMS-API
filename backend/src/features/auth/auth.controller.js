@@ -1,5 +1,6 @@
 //auth.controller.js
 import { registerService, loginService } from "./auth.service.js";
+import sequelize from "../../config/connection.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -8,12 +9,12 @@ export const registerUser = async (req, res) => {
     const { user, token } = await registerService(name, email, password, roles);
 
     // remove password from response
-    const { password: _, ...userWithoutPassword } = user.toJSON();
+    
 
     return res.status(201).json({
       message: "User registered successfully.",
       data: {
-        user: userWithoutPassword,
+        user
       },
     });
   } catch (error) {
