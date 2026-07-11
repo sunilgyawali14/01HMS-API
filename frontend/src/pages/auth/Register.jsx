@@ -8,9 +8,9 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-const roles = ['patient', 'doctor', 'receptionist']
+
 export default function Register() {
   const [form, setForm] = useState({
     name: "",
@@ -19,6 +19,10 @@ export default function Register() {
     role: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,11 +30,23 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      const response = await axios.post("http://localhost:9090/api/auth/register",form);
-      console.log("data", response.data);
-    } catch (error) {
-      console.log("register error", error);
+      const response = await axios.post(
+        "http://localhost:9090/api/auth/register",
+        form
+      );
+      console.log("Register success:", response.data);
+      // Redirect to login page on success
+      navigate("/login");
+    } catch (err) {
+      console.error("Register error:", err);
+      const message =
+        err?.response?.data?.message || "Registration failed. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,6 +71,13 @@ export default function Register() {
             Fill in your details to get started
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl text-sm text-center mb-5 animate-pulse">
+            {error}
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -149,10 +172,11 @@ export default function Register() {
           {/* Button */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition active:scale-95"
+            disabled={loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Register
-            <ArrowRight className="w-4 h-4" />
+            {loading ? "Registering..." : "Register"}
+            {!loading && <ArrowRight className="w-4 h-4" />}
           </button>
         </form>
 

@@ -4,9 +4,9 @@ import sequelize from "../../config/connection.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, roles } = req.body;
+    const { name, email, password, role, roles } = req.body;
 
-    const { user, token } = await registerService(name, email, password, roles);
+    const { user, token } = await registerService(name, email, password, roles || role);
 
     // remove password from response
     
@@ -42,6 +42,7 @@ export const loginUser = async (req, res) => {
       data: {
         user,
         accessToken,
+        refreshToken,
       },
     });
   } catch (error) {

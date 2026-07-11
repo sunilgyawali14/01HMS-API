@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import cors from "cors";
 import { connectionDB } from "./config/index.js";
 import authRouter from "./features/auth/auth.routes.js";
 import doctorRouter from "./features/doctor/doctor.routes.js";
@@ -12,6 +13,7 @@ import receptionistRouter from './features/receptionist/receptionist.route.js';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json()); // this convert the json in to the object
 await connectionDB();
 
