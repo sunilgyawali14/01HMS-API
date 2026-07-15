@@ -22,7 +22,7 @@ const DoctorDepartment = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "department",
+        model: "departments",
         key: "id",
       },
       onDelete: "CASCADE",

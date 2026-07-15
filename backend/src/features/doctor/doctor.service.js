@@ -1,5 +1,6 @@
 import Doctor from "./doctor.models.js";
 import User from "../user/user.model.js";
+import Department from "../departments/department.model.js";
 import sequelize from "../../config/connection.js";
 import bcrypt from "bcrypt";
 
@@ -139,7 +140,13 @@ const createDoctor = async (data, currentUser) => {
 
 // Get all doctors
 const getAllDoctors = async () => {
-  const doctors = await Doctor.findAll();
+  const doctors = await Doctor.findAll({
+    include: [{
+      model: Department,
+      attributes: ['id', 'name'],
+      through: { attributes: [] }
+    }]
+  });
   return doctors;
 };
 

@@ -131,3 +131,70 @@ const createPatientService = async (data, currentUser) => {
 };
 
 export default createPatientService;
+
+// Get patient profile by userId
+export const getPatientByUserId = async (userId) => {
+  const patient = await Patient.findOne({ where: { userId } });
+  return patient ? patient.toJSON() : null;
+};
+
+// Update patient profile by userId
+export const updatePatientProfile = async (userId, data) => {
+  const patient = await Patient.findOne({ where: { userId } });
+  if (!patient) {
+    throw { status: 404, message: 'Patient profile not found' };
+  }
+
+  // Only allow updating these fields
+  const allowedFields = [
+    'firstName', 'lastName', 'phone', 'dateOfBirth', 'gender',
+    'bloodGroup', 'address', 'emergencyContactName',
+    'emergencyContactPhone', 'medicalHistory'
+  ];
+
+  const updates = {};
+  for (const field of allowedFields) {
+    if (data[field] !== undefined) {
+      updates[field] = data[field];
+    }
+  }
+
+  // Validate phone if provided
+  if (updates.phone) {
+    const phoneRegex = /^\+?[0-9]{7,15}$/;
+    if (!phoneRegex.test(updates.phone)) {
+      throw { status: 400, message: 'Invalid phone number. Must be 7-15 digits (optionally starting with +)' };
+    }
+  }
+
+  // Validate gender if provided
+  if (updates.gender) {
+    const allowedGenders = ['male', 'female', 'other'];
+    if (!allowedGenders.includes(updates.gender.toLowerCase())) {
+      throw { status: 400, message: "Gender must be one of: 'male', 'female', 'other'" };
+    }
+    updates.gender = updates.gender.toLowerCase();
+  }
+
+  // Validate bloodGroup if provided
+  if (updates.bloodGroup) {
+    const allowedBloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    if (!allowedBloodGroups.includes(updates.bloodGroup)) {
+      throw { status: 400, message: `Invalid blood group. Allowed values: ${allowedBloodGroups.join(', ')}` };
+    }
+  }
+
+  // Validate dateOfBirth if provided
+  if (updates.dateOfBirth) {
+    const dob = new Date(updates.dateOfBirth);
+    if (isNaN(dob.getTime())) {
+      throw { status: 400, message: 'Invalid dateOfBirth format. Use YYYY-MM-DD' };
+    }
+    if (dob >= new Date()) {
+      throw { status: 400, message: 'Date of birth must be in the past' };
+    }
+  }
+
+  await patient.update(updates);
+  return patient.toJSON();
+};

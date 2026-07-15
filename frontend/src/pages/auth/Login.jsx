@@ -1,22 +1,60 @@
 import { useState } from "react";
 import { Mail, Lock, ShieldCheck, ArrowRight, Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import axios from "axios";
 
+// Role-based redirect map
+const roleRedirects = {
+  patient: '/patient/overview',
+  doctor: '/doctor/overview',
+  receptionist: '/receptionist/overview',
+  // --- ADDED: Admin redirect path ---
+  admin: '/admin/overview',
+}
+
 export default function Login() {
-  const [formData, setForm] = useState({
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
+ const [form, setForm] = useState({ email: '', password: '' })
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+   const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setForm({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    setForm({ ...form, [e.target.name]: e.target.value })
   }
+   const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+      try {
+      const res = await axios.post('http://localhost:9090/api/auth/login', form)
+
+      const { accessToken, refreshToken, user } = res.data.data
+
+      console.log('Login success:', user)
+      console.log('accessToken:', accessToken)
+      console.log('refreshToken:', refreshToken)
+
+      // Save tokens to localStorage
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
+      localStorage.setItem('user', JSON.stringify(user))
+
+      // Redirect based on role
+      const redirectPath = roleRedirects[user.roles] || '/'
+      navigate(redirectPath)
+    } catch (err) {
+      console.error('Login error:', err)
+      const message =
+        err?.response?.data?.message || 'Login failed. Please try again.'
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#020617] flex items-center justify-center px-4">
       {/* Background Blur Effects */}
@@ -49,7 +87,7 @@ export default function Login() {
               type="email"
               name="email"
               placeholder="Email address"
-              value={formData.email}
+              value={form.email}
               onChange={handleChange}
               required
               className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-400 rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"
@@ -64,7 +102,7 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              value={formData.password}
+              value={form.password}
               onChange={handleChange}
               required
               className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-400 rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 transition"

@@ -1,6 +1,6 @@
-import createDepartmentService from './department.service.js';
+import * as departmentService from './department.service.js';
 
-const createDepartment = async (req, res) => {
+export const createDepartment = async (req, res) => {
   try {
     const { name, description } = req.body;
 
@@ -18,7 +18,7 @@ const createDepartment = async (req, res) => {
       });
     }
 
-    const department = await createDepartmentService({ name: name.trim(), description });
+    const department = await departmentService.createDepartmentService({ name: name.trim(), description });
 
     return res.status(201).json({
       success: true,
@@ -34,4 +34,39 @@ const createDepartment = async (req, res) => {
   }
 };
 
-export default createDepartment;
+export const getDepartments = async (req, res) => {
+  try {
+    const departments = await departmentService.getDepartmentsService();
+    return res.status(200).json({ success: true, data: departments });
+  } catch (error) {
+    console.error('Error in getDepartments controller:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+export const updateDepartment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description } = req.body;
+    const department = await departmentService.updateDepartmentService(id, { name: name?.trim(), description });
+    return res.status(200).json({ success: true, message: 'Department updated successfully', data: department });
+  } catch (error) {
+    console.error('Error in updateDepartment controller:', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message || 'Internal server error' });
+  }
+};
+
+export const deleteDepartment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const department = await departmentService.deleteDepartmentService(id);
+    return res.status(200).json({ 
+      success: true, 
+      message: `Department ${department.isActive ? 'activated' : 'deactivated'} successfully`, 
+      data: department 
+    });
+  } catch (error) {
+    console.error('Error in deleteDepartment controller:', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message || 'Internal server error' });
+  }
+};

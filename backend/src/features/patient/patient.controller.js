@@ -1,4 +1,4 @@
-import createPatientService from './patient.service.js';
+import createPatientService, { getPatientByUserId, updatePatientProfile } from './patient.service.js';
 
 // POST /api/patient
 const createPatient = async (req, res) => {
@@ -115,3 +115,40 @@ const createPatient = async (req, res) => {
 };
 
 export default createPatient;
+
+// GET /api/patient/me
+export const getMyProfile = async (req, res) => {
+  try {
+    const profile = await getPatientByUserId(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      data: { profile }
+    });
+  } catch (error) {
+    console.error('Error in getMyProfile controller:', error);
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message || 'Internal server error'
+    });
+  }
+};
+
+// PUT /api/patient/me
+export const updateMyProfile = async (req, res) => {
+  try {
+    const profile = await updatePatientProfile(req.user.id, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated',
+      data: { profile }
+    });
+  } catch (error) {
+    console.error('Error in updateMyProfile controller:', error);
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message || 'Internal server error'
+    });
+  }
+};

@@ -87,6 +87,14 @@ export const loginService= async ({email,password})=>{
     }
   }
 
+  // --- ADDED: Check if the user account is active (soft delete block) ---
+  if (user.isActive === false) {
+    throw {
+      status: 403,
+      message: "Your account has been deactivated"
+    };
+  }
+
   //access-token and refresh-token
   const accessToken= jwt.sign(
     {

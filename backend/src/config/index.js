@@ -55,7 +55,7 @@ const connectionDB = async () => {
     console.log("Database connected successfully");
 
     await sequelize.sync({
-      force: false,
+      alter: true,
     });
 
     console.log("Database synchronized successfully");

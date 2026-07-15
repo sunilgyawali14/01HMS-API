@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import LandingPage from './components/LandingPage'
 import Register from './pages/auth/Register'
-import Login from './Pages/auth/Login'
+import Login from './pages/auth/Login'
 
 // Patient
 import PatientOverview    from './pages/patient/Overview'
@@ -17,6 +17,12 @@ import PatientRequests  from './pages/doctor/PatientRequests'
 import ReceptionistOverview from './pages/receptionist/Overview'
 import AvailableDoctors     from './pages/receptionist/AvailableDoctors'
 import IncomingPatients     from './pages/receptionist/IncomingPatients'
+
+// Admin
+import AdminOverview        from './pages/admin/Overview'
+import AdminUsers           from './pages/admin/Users'
+import AdminDepartments     from './pages/admin/Departments'
+import AdminAppointments    from './pages/admin/Appointments'
 
 function App() {
   return (
@@ -39,6 +45,14 @@ function App() {
         <Route path='/receptionist/overview' element={<ReceptionistOverview />} />
         <Route path='/receptionist/doctors'  element={<AvailableDoctors />} />
         <Route path='/receptionist/patients' element={<IncomingPatients />} />
+
+        {/* Admin */}
+        <Route path='/admin/overview'      element={<AdminOverview />} />
+        <Route path='/admin/doctors'       element={<AdminUsers role="doctor" />} />
+        <Route path='/admin/receptionists' element={<AdminUsers role="receptionist" />} />
+        <Route path='/admin/patients'      element={<AdminUsers role="patient" />} />
+        <Route path='/admin/departments'   element={<AdminDepartments />} />
+        <Route path='/admin/appointments'  element={<AdminAppointments />} />
       </Routes>
     </>
   )

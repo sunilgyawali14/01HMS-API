@@ -29,6 +29,10 @@ const User = sequelize.define(
       type: DataTypes.ENUM("admin", "doctor", "receptionist", "patient"),
       defaultValue: "patient",
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
     refreshToken:{
       type: DataTypes.TEXT,
       allowNull :true

@@ -26,6 +26,14 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
+    // --- ADDED: Block authenticated requests if the user is deactivated ---
+    if (user.isActive === false) {
+      return res.status(401).json({
+        success: false,
+        message: 'Your account has been deactivated'
+      });
+    }
+
     // Attach user to request object
     req.user = user;
     next();
