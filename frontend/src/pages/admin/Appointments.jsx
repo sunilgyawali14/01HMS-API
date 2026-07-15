@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { Calendar, Filter, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 import Sidebar from '../../components/Sidebar'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const API = 'http://localhost:9090/api'
 
@@ -85,6 +87,8 @@ const AdminAppointments = () => {
     fetchAppointments()
   }, [fetchAppointments])
 
+  const { lastUpdated } = useAutoRefresh(fetchAppointments, 30000)
+
   // When any filter changes, reset to page 1
   const handleStatusChange = (tab) => {
     setStatusFilter(tab)
@@ -130,6 +134,7 @@ const AdminAppointments = () => {
           <div>
             <h1 className="dash-title">All Appointments</h1>
             <p className="dash-subtitle">Read-only system-wide appointment view</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar" style={{ background: 'linear-gradient(135deg,#ef4444,#dc2626)' }}>A</div>
         </div>

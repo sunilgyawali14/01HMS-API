@@ -3,6 +3,8 @@ import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import PatientProfileModal from '../../components/PatientProfileModal'
 import { Loader2 } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const PatientOverview = () => {
   const [appointments, setAppointments] = useState([])
@@ -36,6 +38,8 @@ const PatientOverview = () => {
   useEffect(() => {
     fetchAppointments()
   }, [])
+
+  const { lastUpdated } = useAutoRefresh(fetchAppointments, 30000)
 
   // --- ADDED: Calculate stats dynamically based on DB entries ---
   const upcomingCount = appointments.filter((a) => a.status === 'confirmed' || a.status === 'pending').length
@@ -75,6 +79,7 @@ const PatientOverview = () => {
           <div>
             <h1 className="dash-title">Good morning, {firstName} 👋</h1>
             <p className="dash-subtitle">Here's your health summary for today</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <button
             className="dash-avatar"

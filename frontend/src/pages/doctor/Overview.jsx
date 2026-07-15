@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import { Loader2, Calendar, Clock } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const DoctorOverview = () => {
   const [appointments, setAppointments] = useState([])
@@ -33,6 +35,8 @@ const DoctorOverview = () => {
   useEffect(() => {
     fetchAppointments()
   }, [])
+
+  const { lastUpdated } = useAutoRefresh(fetchAppointments, 30000)
 
   // --- ADDED: Dynamically group and count appointments ---
   const totalPatients = new Set(appointments.map((a) => a.patientId)).size
@@ -69,6 +73,7 @@ const DoctorOverview = () => {
           <div>
             <h1 className="dash-title">Welcome, Dr. {doctorName.split(' ').slice(1).join(' ') || doctorName} 👨‍⚕️</h1>
             <p className="dash-subtitle">You have {pendingRequests} pending patient requests today</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>
             {doctorName[0]}

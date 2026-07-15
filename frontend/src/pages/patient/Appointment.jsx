@@ -3,6 +3,8 @@ import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import CreateAppointmentModal from '../../components/CreateAppointmentModal'
 import { Calendar, Clock, Loader2, AlertCircle, Plus } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const STATUS_BADGE_MAP = {
   pending: 'status-yellow',
@@ -45,6 +47,8 @@ const PatientAppointment = () => {
   useEffect(() => {
     fetchAppointments()
   }, [fetchAppointments])
+
+  const { lastUpdated } = useAutoRefresh(fetchAppointments, 30000)
 
   const handleCancel = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) return
@@ -95,6 +99,7 @@ const PatientAppointment = () => {
           <div>
             <h1 className="dash-title">My Appointments</h1>
             <p className="dash-subtitle">Track all your scheduled and past visits</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button

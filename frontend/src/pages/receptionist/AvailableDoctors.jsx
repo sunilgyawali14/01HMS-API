@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import { Loader2, X, AlertCircle } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const modalStyles = {
   overlay: {
@@ -246,6 +248,8 @@ const AvailableDoctors = () => {
     fetchAvailableData()
   }, [])
 
+  const { lastUpdated } = useAutoRefresh(fetchAvailableData, 30000)
+
   // Calculate load per doctor today
   const todayStr = new Date().toDateString()
   const todayActiveAppts = appointments.filter((a) => {
@@ -271,6 +275,7 @@ const AvailableDoctors = () => {
           <div>
             <h1 className="dash-title">Available Doctors</h1>
             <p className="dash-subtitle">Manage doctor availability and assign patient visits</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar" style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>R</div>
         </div>

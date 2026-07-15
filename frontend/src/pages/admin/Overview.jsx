@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 import {
   Activity,
   Users,
@@ -91,6 +93,8 @@ const AdminOverview = () => {
     fetchOverview()
   }, [])
 
+  const { lastUpdated } = useAutoRefresh(fetchOverview, 30000)
+
   /* helper: total monthly appointments */
   const monthlyTotal = data
     ? Object.values(data.appointmentsThisMonth).reduce((s, v) => s + v, 0)
@@ -140,6 +144,7 @@ const AdminOverview = () => {
           <div>
             <h1 className="dash-title">Admin Dashboard</h1>
             <p className="dash-subtitle">System overview and statistics</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar">A</div>
         </div>

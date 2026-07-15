@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import { Loader2, Calendar, Clock, CheckCircle } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const STATUS_BADGE_MAP = {
   pending: 'status-yellow',
@@ -48,6 +50,8 @@ const IncomingPatients = () => {
   useEffect(() => {
     fetchTodayAppointments()
   }, [fetchTodayAppointments])
+
+  const { lastUpdated } = useAutoRefresh(fetchTodayAppointments, 30000)
 
   const handleStatusChange = async (id, newStatus) => {
     setUpdatingId(id)
@@ -102,6 +106,7 @@ const IncomingPatients = () => {
           <div>
             <h1 className="dash-title">Incoming Patients</h1>
             <p className="dash-subtitle">Monitor and manage today's patient check-in flow</p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar" style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>R</div>
         </div>

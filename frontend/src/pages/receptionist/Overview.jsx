@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/Sidebar'
 import { Loader2, Calendar, Clock, CheckCircle } from 'lucide-react'
+import useAutoRefresh from '../../hooks/useAutoRefresh'
+import LiveBadge from '../../components/LiveBadge'
 
 const ReceptionistOverview = () => {
   const [appointments, setAppointments] = useState([])
@@ -32,6 +34,8 @@ const ReceptionistOverview = () => {
   useEffect(() => {
     fetchOverviewData()
   }, [])
+
+  const { lastUpdated } = useAutoRefresh(fetchOverviewData, 30000)
 
   // --- ADDED: Calculate live counts ---
   const totalDoctors = doctors.length
@@ -72,6 +76,7 @@ const ReceptionistOverview = () => {
             <p className="dash-subtitle">
               {totalPendingRequests} pending requests awaiting confirmation — {availableDoctors} doctors available
             </p>
+            <LiveBadge lastUpdated={lastUpdated} />
           </div>
           <div className="dash-avatar" style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>R</div>
         </div>
