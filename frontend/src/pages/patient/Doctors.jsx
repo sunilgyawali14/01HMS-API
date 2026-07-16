@@ -116,7 +116,7 @@ const BookingModal = ({ doctor, onClose, onBooked }) => {
           status: 'pending',
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
         }
       )
       onBooked()
@@ -214,7 +214,7 @@ const PatientDoctors = () => {
     try {
       // --- ADDED: Fetch live doctor entries from DB ---
       const res = await axios.get('http://localhost:9090/api/doctors', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       // The API returns directly an array
       setDoctors(Array.isArray(res.data) ? res.data : [])

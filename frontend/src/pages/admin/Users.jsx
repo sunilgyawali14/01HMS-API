@@ -30,7 +30,7 @@ export default function AdminUsers({ role }) {
     try {
       const res = await axios.get(`${API}/admin/users/${role}`, {
         params: { page: currentPage, limit: LIMIT },
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       const { users: list, total: t, pages, currentPage: cp } = res.data.data
       setUsers(list)
@@ -55,7 +55,7 @@ export default function AdminUsers({ role }) {
       await axios.patch(
         `${API}/admin/users/${userId}/toggle-status`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` } }
       )
       await fetchUsers(page)
     } catch (err) {

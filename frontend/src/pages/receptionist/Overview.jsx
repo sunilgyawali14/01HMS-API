@@ -15,7 +15,7 @@ const ReceptionistOverview = () => {
     setLoading(true)
     setError(null)
     try {
-      const headers = { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const headers = { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }
       const [apptsRes, docsRes] = await Promise.all([
         axios.get('http://localhost:9090/api/appointments', { headers }),
         axios.get('http://localhost:9090/api/doctors', { headers }),

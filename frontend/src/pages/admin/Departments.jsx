@@ -6,7 +6,7 @@ import Sidebar from '../../components/Sidebar'
 const API = 'http://localhost:9090/api'
 
 const headers = () => ({
-  Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+  Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
 })
 
 /* ── inline styles for the modal (glassmorphism, dark theme) ── */

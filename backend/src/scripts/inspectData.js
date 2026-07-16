@@ -5,6 +5,7 @@ import User from "../features/user/user.model.js";
 import Doctor from "../features/doctor/doctor.models.js";
 import Department from "../features/departments/department.model.js";
 import Appointment from "../features/appointments/appointment.model.js";
+import "../config/index.js"; // to load associations
 
 const run = async () => {
   try {

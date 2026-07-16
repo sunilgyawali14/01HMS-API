@@ -27,7 +27,7 @@ const IncomingPatients = () => {
     setError(null)
     try {
       const res = await axios.get('http://localhost:9090/api/appointments', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       if (res.data.success) {
         // Show appointments scheduled for today OR any appointments that are pending/rejected (so receptionist can assign/confirm them)
@@ -60,7 +60,7 @@ const IncomingPatients = () => {
         `http://localhost:9090/api/appointments/${id}/status`,
         { status: newStatus },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
         }
       )
       await fetchTodayAppointments()
@@ -199,7 +199,7 @@ const IncomingPatients = () => {
                                     await axios.patch(
                                       `http://localhost:9090/api/appointments/${row.id}/assign`,
                                       { doctorId: row.doctorId },
-                                      { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+                                      { headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` } }
                                     )
                                     await fetchTodayAppointments()
                                   } catch (err) {

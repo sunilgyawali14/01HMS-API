@@ -30,7 +30,7 @@ const PatientRequests = () => {
     setError(null)
     try {
       const res = await axios.get('http://localhost:9090/api/appointments', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       if (res.data.success) {
         setAppointments(res.data.data.appointments || [])
@@ -56,7 +56,7 @@ const PatientRequests = () => {
         `http://localhost:9090/api/appointments/${id}/status`,
         { status },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
         }
       )
       await fetchAppointments()
@@ -77,13 +77,13 @@ const PatientRequests = () => {
       await axios.patch(
         `http://localhost:9090/api/appointments/${consultingAppt.id}/notes`,
         notes,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` } }
       )
       // Change status to completed
       await axios.patch(
         `http://localhost:9090/api/appointments/${consultingAppt.id}/status`,
         { status: 'completed' },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` } }
       )
       setShowModal(false)
       setConsultingAppt(null)

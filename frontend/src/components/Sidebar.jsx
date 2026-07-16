@@ -183,9 +183,9 @@ const Sidebar = ({ role }) => {
   const color = roleColors[role] || '#6358fc'
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('user')
+    sessionStorage.removeItem('accessToken')
+    sessionStorage.removeItem('refreshToken')
+    sessionStorage.removeItem('user')
     navigate('/login')
   }
 

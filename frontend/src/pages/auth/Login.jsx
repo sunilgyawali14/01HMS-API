@@ -35,10 +35,10 @@ export default function Login() {
       console.log('accessToken:', accessToken)
       console.log('refreshToken:', refreshToken)
 
-      // Save tokens to localStorage
-      localStorage.setItem('accessToken', accessToken)
-      localStorage.setItem('refreshToken', refreshToken)
-      localStorage.setItem('user', JSON.stringify(user))
+      // Save tokens to sessionStorage
+      sessionStorage.setItem('accessToken', accessToken)
+      sessionStorage.setItem('refreshToken', refreshToken)
+      sessionStorage.setItem('user', JSON.stringify(user))
 
       // Redirect based on role
       const redirectPath = roleRedirects[user.roles] || '/'

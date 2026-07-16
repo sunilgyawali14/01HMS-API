@@ -12,8 +12,8 @@ const PatientOverview = () => {
   const [error, setError] = useState(null)
   const [showProfile, setShowProfile] = useState(false)
 
-  // Retrieve user details from localStorage
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  // Retrieve user details from sessionStorage
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}')
   const firstName = user.name ? user.name.split(' ')[0] : 'Guest'
 
   const fetchAppointments = async () => {
@@ -22,7 +22,7 @@ const PatientOverview = () => {
     try {
       // --- ADDED: Fetch real patient-specific appointments from API ---
       const res = await axios.get('http://localhost:9090/api/appointments', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       if (res.data.success) {
         setAppointments(res.data.data.appointments || [])

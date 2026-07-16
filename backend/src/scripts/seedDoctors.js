@@ -78,13 +78,6 @@ const seedDoctors = async () => {
     let createdCount = 0;
 
     for (const docData of DOCTORS) {
-      // Check if user already exists
-      const existingUser = await User.findOne({ where: { email: docData.email } });
-      if (existingUser) {
-        console.log(`  ⏭  Skipped (user already exists): Dr. ${docData.firstName} ${docData.lastName}`);
-        continue;
-      }
-
       const department = await Department.findOne({ where: { name: docData.departmentName } });
       if (!department) {
         console.log(`  ❌ Failed (department not found): ${docData.departmentName} for Dr. ${docData.firstName}`);
@@ -93,42 +86,72 @@ const seedDoctors = async () => {
 
       const transaction = await sequelize.transaction();
       try {
+        let user = await User.findOne({ where: { email: docData.email } }, { transaction });
         const hashPassword = await bcrypt.hash(docData.password, 10);
-        
-        const user = await User.create({
-          name: `${docData.firstName} ${docData.lastName}`,
-          email: docData.email,
-          password: hashPassword,
-          roles: "doctor"
+
+        if (!user) {
+          user = await User.create({
+            name: `${docData.firstName} ${docData.lastName}`,
+            email: docData.email,
+            password: hashPassword,
+            roles: "doctor"
+          }, { transaction });
+          console.log(`  👤 Created User: ${docData.email}`);
+        } else {
+          // Make sure user role is set to doctor
+          if (user.roles !== "doctor") {
+            user.roles = "doctor";
+            await user.save({ transaction });
+          }
+        }
+
+        let doctor = await Doctor.findOne({ where: { email: docData.email } }, { transaction });
+        if (!doctor) {
+          doctor = await Doctor.create({
+            firstName: docData.firstName,
+            lastName: docData.lastName,
+            email: docData.email,
+            phone: docData.phone,
+            password: hashPassword,
+            specialization: docData.specialization,
+            qualification: docData.qualification,
+            experienceYears: docData.experienceYears,
+            licenseNumber: docData.licenseNumber,
+            gender: docData.gender,
+            status: docData.status,
+            userId: user.id
+          }, { transaction });
+          console.log(`  ✅ Created Doctor: Dr. ${docData.firstName} ${docData.lastName}`);
+          createdCount++;
+        } else {
+          // If doctor exists, ensure the userId is linked correctly
+          if (doctor.userId !== user.id) {
+            doctor.userId = user.id;
+            await doctor.save({ transaction });
+            console.log(`  🔗 Linked existing Doctor Dr. ${docData.firstName} ${docData.lastName} to User ID ${user.id}`);
+          } else {
+            console.log(`  ⏭  Skipped (Doctor & User already linked): Dr. ${docData.firstName} ${docData.lastName}`);
+          }
+        }
+
+        // Handle department assignment
+        const existingDeptAssoc = await DoctorDepartment.findOne({
+          where: { doctorId: doctor.id, departmentId: department.id }
         }, { transaction });
 
-        const doctor = await Doctor.create({
-          firstName: docData.firstName,
-          lastName: docData.lastName,
-          email: docData.email,
-          phone: docData.phone,
-          password: hashPassword,
-          specialization: docData.specialization,
-          qualification: docData.qualification,
-          experienceYears: docData.experienceYears,
-          licenseNumber: docData.licenseNumber,
-          gender: docData.gender,
-          status: docData.status,
-          userId: user.id
-        }, { transaction });
-
-        await DoctorDepartment.create({
-          doctorId: doctor.id,
-          departmentId: department.id,
-          role: docData.role
-        }, { transaction });
+        if (!existingDeptAssoc) {
+          await DoctorDepartment.create({
+            doctorId: doctor.id,
+            departmentId: department.id,
+            role: docData.role
+          }, { transaction });
+          console.log(`  🏢 Assigned Dr. ${docData.firstName} to Department: ${docData.departmentName}`);
+        }
 
         await transaction.commit();
-        console.log(`  ✅ Created: Dr. ${docData.firstName} ${docData.lastName} (${docData.departmentName})`);
-        createdCount++;
       } catch (err) {
         await transaction.rollback();
-        console.error(`  ❌ Failed to create Dr. ${docData.firstName}:`, err.message);
+        console.error(`  ❌ Failed to seed Dr. ${docData.firstName}:`, err.message);
       }
     }
 

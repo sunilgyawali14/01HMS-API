@@ -10,7 +10,7 @@ const DoctorOverview = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}')
   const doctorName = user.name || 'Doctor'
 
   const fetchAppointments = async () => {
@@ -19,7 +19,7 @@ const DoctorOverview = () => {
     try {
       // --- ADDED: Fetch doctor-specific appointments (scoped automatically in backend) ---
       const res = await axios.get('http://localhost:9090/api/appointments', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       if (res.data.success) {
         setAppointments(res.data.data.appointments || [])
@@ -40,7 +40,7 @@ const DoctorOverview = () => {
 
   // --- ADDED: Dynamically group and count appointments ---
   const totalPatients = new Set(appointments.map((a) => a.patientId)).size
-  const pendingRequests = appointments.filter((a) => a.status === 'pending').length
+  const pendingRequests = appointments.filter((a) => a.status === 'assigned').length
   const completedCount = appointments.filter((a) => a.status === 'completed').length
 
   const statCards = [

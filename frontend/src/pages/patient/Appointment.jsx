@@ -31,7 +31,7 @@ const PatientAppointment = () => {
     setError(null)
     try {
       const res = await axios.get('http://localhost:9090/api/appointments', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       if (res.data.success) {
         setAppointments(res.data.data.appointments || [])
@@ -58,7 +58,7 @@ const PatientAppointment = () => {
         `http://localhost:9090/api/appointments/${id}/status`,
         { status: 'cancelled' },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
         }
       )
       await fetchAppointments()

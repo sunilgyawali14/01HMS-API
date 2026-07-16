@@ -122,7 +122,7 @@ const AssignPatientModal = ({ doctor, onClose, onAssigned }) => {
           status: 'confirmed', // Receptionists assign with pre-confirmed status
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
         }
       )
       onAssigned()
@@ -229,7 +229,7 @@ const AvailableDoctors = () => {
     setLoading(true)
     setError(null)
     try {
-      const headers = { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const headers = { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }
       const [docsRes, apptsRes] = await Promise.all([
         axios.get('http://localhost:9090/api/doctors', { headers }),
         axios.get('http://localhost:9090/api/appointments', { headers }),

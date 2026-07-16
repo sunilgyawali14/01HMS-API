@@ -15,7 +15,7 @@ const CreateAppointmentModal = ({ onClose, onCreated }) => {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const token = localStorage.getItem('accessToken')
+  const token = sessionStorage.getItem('accessToken')
 
   // Fetch doctors and departments
   useEffect(() => {

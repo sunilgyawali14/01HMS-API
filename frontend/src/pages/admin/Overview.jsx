@@ -79,7 +79,7 @@ const AdminOverview = () => {
     setError(null)
     try {
       const res = await axios.get(`${API}/admin/overview`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
       setData(res.data.data)
     } catch (err) {

@@ -36,7 +36,7 @@ const PatientProfileModal = ({ onClose }) => {
   const [submitError, setSubmitError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
-  const token = localStorage.getItem('accessToken')
+  const token = sessionStorage.getItem('accessToken')
 
   // ── Fetch profile on mount ──
   const fetchProfile = async () => {

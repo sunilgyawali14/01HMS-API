@@ -61,7 +61,7 @@ const AdminAppointments = () => {
 
       const { data: res } = await axios.get(`${API}/appointments`, {
         params,
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },
       })
 
       if (res.success) {
